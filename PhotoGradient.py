@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib import colors
 import colorspacious as cs
-import heapq
+
 import operator
 import math
 import random
@@ -14,6 +14,9 @@ import time
 
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
+
+from sklearn.cluster import MiniBatchKMeans
+from collections import Counter
 
 """
 Ok so having trouble implementing, gonna try pytorch or keras and see if I can
@@ -64,28 +67,32 @@ def hashable(arr):
     arr2 = [map(tuple,subarr) for subarr in arr]
     return tuple(map(tuple,arr2))
 
-class distanceDynamicPhoto():
-    def __init__(self,image,Himage,images=[]):
+class dynamicPhoto():
+    def __init__(self,image,rgbImage):
+        self.rgbImage = rgbImage
         self.image = image
-        self.Himage = Himage
-        self.distances = {}
-        self.colors = []
-        for i in images:
-            self.distances[hash(hashable(i))] = (i,np.sum(cs.deltaE(self.image,i)))
+        self.total = 0
+        self.colors = {}
 
-    def addDistance(self,oImage):
-        self.distances[hash(hashable(oImage))] = (oImage,np.sum(cs.deltaE(self.image,oImage)))
-    def addDistances(self,oImages):
-        for images in oImages:
-            self.distances[hash(hashable(images))] = (image,np.sum(cs.deltaE(self.image,images)))
+    def colorQuant(self,centroids):
+        mbKmeans = MiniBatchKMeans(n_clusters=centroids)
+        # print(type(self.image))
+        mbkFitted = mbKmeans.fit(self.image.reshape(self.image.shape[0]*self.image.shape[1],3))
+        colors = mbkFitted.cluster_centers_
+        count = Counter(mbkFitted.labels_)
+        self.total = float(len(mbkFitted.labels_))
+        self.colors = {i:count[i]/self.total for i in colors}
+
+
+
+
+
     def __hash__(self):
-        return hash(hashable(self.image))
-    def findNearest(self,NotUsedHash):
+        return hash(hashable(self.rgbImage))
 
-        dist = [self.distances[nu] for nu in NotUsedHash if nu != hash(self)]
-        return min(dist,key=operator.itemgetter(1))
 
-def openResize(pathTo,count,total,res = 8):
+
+def openResize(pathTo,count,total,res = 500):
     if (count%10==0):
         print(str(100*float(count)/total)+"%")
     im = cv2.cvtColor(cv2.imread(pathTo),cv2.COLOR_BGR2RGB)
@@ -101,25 +108,35 @@ path = "./Images/"
 files = subprocess.check_output(["ls",path]).split("\n")
 files = [i for i in files if i[-4:len(i)] == ".jpg"]
 # get colorspace batch converters
-cs_converterTo1 = cs.cspace_converter("sRGB255","sRGB1")
-cs_converterTo255 = cs.cspace_converter("sRGB1","sRGB255")
+cs_converterToCIE = cs.cspace_converter("sRGB255","CAM02-UCS")
+cs_converterTo255 = cs.cspace_converter("CAM02-UCS","sRGB255")
 
 
 # -- load them up in a hashable form
-
-
-openImages = [(cs_converterTo1(openResize(path+i,indx,len(files))),openResize(path+i,1,1,res=100)) for indx,i in enumerate(files)]
-
+openImages = [openResize(path + i, indx, len(files)) for indx,i in enumerate(files)]
+dynImages = [dynamicPhoto(cs_converterToCIE(i),i) for i in openImages]
+dynamicImagesDict = {hash(i):i for i in dynImages}
 
 # -- perform color quantization on the photos
-
-
-
+for images in dynImages:
+    images.colorQuant(32)
 
 # list all the hash values of the photos
+hashes = [hash(i) for i in dynImages]
+print(hashes)
+# # make a dictionary of pairwise distances
+def makePairwise(listA):
+    for indx,items in enumerate(listA):
+        for others in a[indx+1:]:
+            if others < items:
+                yield others,items
+            else:
+                yield items,others
 
-# make a dictionary of pairwise distances
+hashPairs = list(makePairwise(hashes))
 
+
+#
 # create a distance matrix
 
 # optimize
@@ -127,76 +144,76 @@ openImages = [(cs_converterTo1(openResize(path+i,indx,len(files))),openResize(pa
 # display
 
 # make color grading program
-
-
-print(openImages)
-
-
-dynImageList = [distanceDynamicPhoto(i[0],i[1],images=([a[0] for a in openImages
-if hash(hashable(a[0])) != hash(hashable(i[0]))])) for i in openImages]
-dynamicImagesDict = {hash(i):i for i in dynImageList}
-
-
-origUnused = dynamicImagesDict.keys()
-
-
-print("num")
-print(len(origUnused))
-
-
-
-
-
-def createDataFrame(dynamicImagesDict,scale = 10000):
-    hashList = dynamicImagesDict.keys()
-    distanceMatrix = []
-    #want a matrix that has space for all in hashlist+1
-    distanceMatrix.append([0 for i in range(0,len(hashList)+1)])
-    #want to make a null node which will always have zero distance
-    for currIdx,dImagesH in enumerate(hashList):
-        temp = [0]
-        for idx,h in enumerate(hashList):
-            if currIdx == idx:
-                temp.append(0)
-            else:
-                temp.append(int(dynamicImagesDict[dImagesH].distances[h][1]*scale))
-        distanceMatrix.append(temp)
-    dF = {"distance_matrix":distanceMatrix}
-    dF["start"] = 0
-    dF["num_vehicles"] = 1
-    return hashList,dF
-
-hashOrder,dF = createDataFrame(dynamicImagesDict)
-
-
-manager = pywrapcp.RoutingIndexManager(len(dF["distance_matrix"]),
-dF["num_vehicles"],dF["start"])
-
-rt = pywrapcp.RoutingModel(manager)
-def distance_call(fromI,toI):
-    fNode = manager.IndexToNode(fromI)
-    tNode = manager.IndexToNode(toI)
-    return dF["distance_matrix"][fNode][tNode]
-cbIndex = rt.RegisterTransitCallback(distance_call)
-rt.SetArcCostEvaluatorOfAllVehicles(cbIndex)
-
-search_param = pywrapcp.DefaultRoutingSearchParameters()
-search_param.local_search_metaheuristic = (routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH)
-search_param.time_limit.seconds = 15
-t = time.time()
-ret = rt.SolveWithParameters(search_param)
-print("--- %s seconds ---" % (time.time() - t))
-toPlot = []
-if ret:
-    ind = rt.Start(0)
-    while not rt.IsEnd(ind):
-        if ind != 0:
-            toPlot.append(dynamicImagesDict[hashOrder[ind-1]].Himage)
-        ind = ret.Value(rt.NextVar(ind))
-
-for indx,images in enumerate(toPlot):
-    plt.subplot(math.ceil(len(toPlot)/3.0),3,indx+1)
-    plt.imshow(images)
-    plt.axis('off')
-plt.subplots_adjust(wspace=0,hspace=0)
-plt.show()
+#
+#
+# print(openImages)
+#
+#
+# dynImageList = [distanceDynamicPhoto(i[0],i[1],images=([a[0] for a in openImages
+# if hash(hashable(a[0])) != hash(hashable(i[0]))])) for i in openImages]
+# dynamicImagesDict = {hash(i):i for i in dynImageList}
+#
+#
+# origUnused = dynamicImagesDict.keys()
+#
+#
+# print("num")
+# print(len(origUnused))
+#
+#
+#
+#
+#
+# def createDataFrame(dynamicImagesDict,scale = 10000):
+#     hashList = dynamicImagesDict.keys()
+#     distanceMatrix = []
+#     #want a matrix that has space for all in hashlist+1
+#     distanceMatrix.append([0 for i in range(0,len(hashList)+1)])
+#     #want to make a null node which will always have zero distance
+#     for currIdx,dImagesH in enumerate(hashList):
+#         temp = [0]
+#         for idx,h in enumerate(hashList):
+#             if currIdx == idx:
+#                 temp.append(0)
+#             else:
+#                 temp.append(int(dynamicImagesDict[dImagesH].distances[h][1]*scale))
+#         distanceMatrix.append(temp)
+#     dF = {"distance_matrix":distanceMatrix}
+#     dF["start"] = 0
+#     dF["num_vehicles"] = 1
+#     return hashList,dF
+#
+# hashOrder,dF = createDataFrame(dynamicImagesDict)
+#
+#
+# manager = pywrapcp.RoutingIndexManager(len(dF["distance_matrix"]),
+# dF["num_vehicles"],dF["start"])
+#
+# rt = pywrapcp.RoutingModel(manager)
+# def distance_call(fromI,toI):
+#     fNode = manager.IndexToNode(fromI)
+#     tNode = manager.IndexToNode(toI)
+#     return dF["distance_matrix"][fNode][tNode]
+# cbIndex = rt.RegisterTransitCallback(distance_call)
+# rt.SetArcCostEvaluatorOfAllVehicles(cbIndex)
+#
+# search_param = pywrapcp.DefaultRoutingSearchParameters()
+# search_param.local_search_metaheuristic = (routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH)
+# search_param.time_limit.seconds = 15
+# t = time.time()
+# ret = rt.SolveWithParameters(search_param)
+# print("--- %s seconds ---" % (time.time() - t))
+# toPlot = []
+# if ret:
+#     ind = rt.Start(0)
+#     while not rt.IsEnd(ind):
+#         if ind != 0:
+#             toPlot.append(dynamicImagesDict[hashOrder[ind-1]].Himage)
+#         ind = ret.Value(rt.NextVar(ind))
+#
+# for indx,images in enumerate(toPlot):
+#     plt.subplot(math.ceil(len(toPlot)/3.0),3,indx+1)
+#     plt.imshow(images)
+#     plt.axis('off')
+# plt.subplots_adjust(wspace=0,hspace=0)
+# plt.show()
