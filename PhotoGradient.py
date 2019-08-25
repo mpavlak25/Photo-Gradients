@@ -16,6 +16,17 @@ from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
 """
+Ok so having trouble implementing, gonna try pytorch or keras and see if I can
+get it done
+
+to do
+switch to kmeans color quanitzation and scrap whole shebang of stuff so it's more efficient
+use pytorch or keras and get azure ml worked into my solution
+
+
+faster photo import
+
+
 Planning/considering the problem:
 
 At its very core, the problem of forming images into a gradient is a rather
@@ -46,6 +57,7 @@ than one dozens away.
 """approach two: basic genetic algorithms with a naive fitness function"""
 
 
+
 def hashable(arr):
     """Returns a hashable form of an image where all the lists are replaced with
     tuples"""
@@ -57,6 +69,7 @@ class distanceDynamicPhoto():
         self.image = image
         self.Himage = Himage
         self.distances = {}
+        self.colors = []
         for i in images:
             self.distances[hash(hashable(i))] = (i,np.sum(cs.deltaE(self.image,i)))
 
@@ -80,15 +93,41 @@ def openResize(pathTo,count,total,res = 8):
     return im
 
 
+### organization
+# -- first setup for importing all photos
 
+#get names
 path = "./Images/"
 files = subprocess.check_output(["ls",path]).split("\n")
 files = [i for i in files if i[-4:len(i)] == ".jpg"]
-print(files)
+# get colorspace batch converters
 cs_converterTo1 = cs.cspace_converter("sRGB255","sRGB1")
 cs_converterTo255 = cs.cspace_converter("sRGB1","sRGB255")
 
+
+# -- load them up in a hashable form
+
+
 openImages = [(cs_converterTo1(openResize(path+i,indx,len(files))),openResize(path+i,1,1,res=100)) for indx,i in enumerate(files)]
+
+
+# -- perform color quantization on the photos
+
+
+
+
+# list all the hash values of the photos
+
+# make a dictionary of pairwise distances
+
+# create a distance matrix
+
+# optimize
+
+# display
+
+# make color grading program
+
 
 print(openImages)
 
