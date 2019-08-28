@@ -16,6 +16,7 @@ from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
 from sklearn.cluster import MiniBatchKMeans
+
 from collections import Counter
 
 """
@@ -80,8 +81,12 @@ class dynamicPhoto():
         mbkFitted = mbKmeans.fit(self.image.reshape(self.image.shape[0]*self.image.shape[1],3))
         colors = mbkFitted.cluster_centers_
         count = Counter(mbkFitted.labels_)
+        print(count)
         self.total = float(len(mbkFitted.labels_))
-        self.colors = {i:count[i]/self.total for i in colors}
+        print(self.total)
+        colors = map(tuple,colors)
+
+        self.colors = {i:count[indx]/self.total for indx,i in enumerate(colors)}
 
 
 
@@ -127,24 +132,103 @@ print(hashes)
 # # make a dictionary of pairwise distances
 def makePairwise(listA):
     for indx,items in enumerate(listA):
-        for others in a[indx+1:]:
+        for others in listA[indx+1:]:
             if others < items:
                 yield others,items
             else:
                 yield items,others
 
 hashPairs = list(makePairwise(hashes))
-
+# print(hashPairs)
 
 #
 # create a distance matrix
+def cdist(a,b):
+    return np.linalg.norm(np.array(a)-np.array(b))
+def calcDist(hashPair,dynamicImagesDict):
+    dist = 0
+    print(dynamicImagesDict[hashPair[0]])
+    for colors in dynamicImagesDict[hashPair[0]].colors.items():
+        for otherColors in dynamicImagesDict[hashPair[1]].colors.items():
+            # print(colors)
+            # print(otherColors)
+            dist += colors[1]*otherColors[1]*cdist(colors[0],otherColors[0])
+    return dist
+
+distDict = {h:calcDist(h,dynamicImagesDict) for h in hashPairs}
+print(distDict)
+indexDict = {h:indx for indx,h in enumerate(hashes)}
+
+
+def createDataFrame(indexDict,distDict,scale = 10000):
+    hashList = indexDict.keys()
+    distanceMatrix = []
+    #want a matrix that has space for all in hashlist+1
+    distanceMatrix.append([0 for i in range(0,len(hashList)+1)])
+    #want to make a null node which will always have zero distance
+    for currIdx,dImagesH in enumerate(hashList):
+        temp = [0]
+        for idx,h in enumerate(hashList):
+            if currIdx == idx:
+                temp.append(0)
+            else:
+                if dImagesH < h:
+                    temp.append(int(distDict[(dImagesH,h)]*scale))
+                elif h < dImagesH:
+                    temp.append(int(distDict[(h,dImagesH)]*scale))
+        distanceMatrix.append(temp)
+    dF = {"distance_matrix":distanceMatrix}
+    dF["start"] = 0
+    dF["num_vehicles"] = 1
+    return hashList,dF
+
+hashOrder,dF = createDataFrame(indexDict,distDict)
+
+manager = pywrapcp.RoutingIndexManager(len(dF["distance_matrix"]),
+dF["num_vehicles"],dF["start"])
+
+rt = pywrapcp.RoutingModel(manager)
+def distance_call(fromI,toI):
+    fNode = manager.IndexToNode(fromI)
+    tNode = manager.IndexToNode(toI)
+    return dF["distance_matrix"][fNode][tNode]
+cbIndex = rt.RegisterTransitCallback(distance_call)
+rt.SetArcCostEvaluatorOfAllVehicles(cbIndex)
+
+search_param = pywrapcp.DefaultRoutingSearchParameters()
+search_param.local_search_metaheuristic = (routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH)
+search_param.time_limit.seconds = 15
+t = time.time()
+ret = rt.SolveWithParameters(search_param)
+print("--- %s seconds ---" % (time.time() - t))
+toPlot = []
+if ret:
+    ind = rt.Start(0)
+    while not rt.IsEnd(ind):
+        if ind != 0:
+            toPlot.append(dynamicImagesDict[hashOrder[ind-1]].rgbImage)
+        ind = ret.Value(rt.NextVar(ind))
+
+for indx,images in enumerate(toPlot):
+    plt.subplot(math.ceil(len(toPlot)/3.0),3,indx+1)
+    plt.imshow(images)
+    plt.axis('off')
+plt.subplots_adjust(wspace=0,hspace=0)
+plt.show()
+
 
 # optimize
 
+
+
 # display
 
+
+
 # make color grading program
+
 #
+
 #
 # print(openImages)
 #
@@ -164,56 +248,7 @@ hashPairs = list(makePairwise(hashes))
 #
 #
 #
-# def createDataFrame(dynamicImagesDict,scale = 10000):
-#     hashList = dynamicImagesDict.keys()
-#     distanceMatrix = []
-#     #want a matrix that has space for all in hashlist+1
-#     distanceMatrix.append([0 for i in range(0,len(hashList)+1)])
-#     #want to make a null node which will always have zero distance
-#     for currIdx,dImagesH in enumerate(hashList):
-#         temp = [0]
-#         for idx,h in enumerate(hashList):
-#             if currIdx == idx:
-#                 temp.append(0)
-#             else:
-#                 temp.append(int(dynamicImagesDict[dImagesH].distances[h][1]*scale))
-#         distanceMatrix.append(temp)
-#     dF = {"distance_matrix":distanceMatrix}
-#     dF["start"] = 0
-#     dF["num_vehicles"] = 1
-#     return hashList,dF
-#
+
 # hashOrder,dF = createDataFrame(dynamicImagesDict)
 #
 #
-# manager = pywrapcp.RoutingIndexManager(len(dF["distance_matrix"]),
-# dF["num_vehicles"],dF["start"])
-#
-# rt = pywrapcp.RoutingModel(manager)
-# def distance_call(fromI,toI):
-#     fNode = manager.IndexToNode(fromI)
-#     tNode = manager.IndexToNode(toI)
-#     return dF["distance_matrix"][fNode][tNode]
-# cbIndex = rt.RegisterTransitCallback(distance_call)
-# rt.SetArcCostEvaluatorOfAllVehicles(cbIndex)
-#
-# search_param = pywrapcp.DefaultRoutingSearchParameters()
-# search_param.local_search_metaheuristic = (routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH)
-# search_param.time_limit.seconds = 15
-# t = time.time()
-# ret = rt.SolveWithParameters(search_param)
-# print("--- %s seconds ---" % (time.time() - t))
-# toPlot = []
-# if ret:
-#     ind = rt.Start(0)
-#     while not rt.IsEnd(ind):
-#         if ind != 0:
-#             toPlot.append(dynamicImagesDict[hashOrder[ind-1]].Himage)
-#         ind = ret.Value(rt.NextVar(ind))
-#
-# for indx,images in enumerate(toPlot):
-#     plt.subplot(math.ceil(len(toPlot)/3.0),3,indx+1)
-#     plt.imshow(images)
-#     plt.axis('off')
-# plt.subplots_adjust(wspace=0,hspace=0)
-# plt.show()
