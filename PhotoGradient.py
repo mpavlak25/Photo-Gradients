@@ -20,6 +20,15 @@ from sklearn.cluster import MiniBatchKMeans
 from collections import Counter
 
 """
+Ok so good on the general implementation. What I do need to do is make the ms
+azure piece/finish it
+
+goals is convert to cie first
+cluster first and all references
+either cluster separately or together and keep track of indices
+
+
+
 Ok so having trouble implementing, gonna try pytorch or keras and see if I can
 get it done
 
@@ -61,6 +70,12 @@ than one dozens away.
 """approach two: basic genetic algorithms with a naive fitness function"""
 
 
+def openResize(pathTo,count,total,res = 500):
+    if (count%10==0):
+        print(str(100*float(count)/total)+"%")
+    im = cv2.cvtColor(cv2.imread(pathTo),cv2.COLOR_BGR2RGB)
+    im = cv2.resize(im,(res,res))
+    return im
 
 def hashable(arr):
     """Returns a hashable form of an image where all the lists are replaced with
@@ -74,36 +89,21 @@ class dynamicPhoto():
         self.image = image
         self.total = 0
         self.colors = {}
-
     def colorQuant(self,centroids):
         mbKmeans = MiniBatchKMeans(n_clusters=centroids)
         # print(type(self.image))
         mbkFitted = mbKmeans.fit(self.image.reshape(self.image.shape[0]*self.image.shape[1],3))
         colors = mbkFitted.cluster_centers_
         count = Counter(mbkFitted.labels_)
-        print(count)
+        # print(count)
         self.total = float(len(mbkFitted.labels_))
-        print(self.total)
+        # print(self.total)
         colors = map(tuple,colors)
 
         self.colors = {i:count[indx]/self.total for indx,i in enumerate(colors)}
 
-
-
-
-
     def __hash__(self):
         return hash(hashable(self.rgbImage))
-
-
-
-def openResize(pathTo,count,total,res = 500):
-    if (count%10==0):
-        print(str(100*float(count)/total)+"%")
-    im = cv2.cvtColor(cv2.imread(pathTo),cv2.COLOR_BGR2RGB)
-    im = cv2.resize(im,(res,res))
-    return im
-
 
 ### organization
 # -- first setup for importing all photos
@@ -124,11 +124,11 @@ dynamicImagesDict = {hash(i):i for i in dynImages}
 
 # -- perform color quantization on the photos
 for images in dynImages:
-    images.colorQuant(32)
+    images.colorQuant(16)
 
 # list all the hash values of the photos
 hashes = [hash(i) for i in dynImages]
-print(hashes)
+
 # # make a dictionary of pairwise distances
 def makePairwise(listA):
     for indx,items in enumerate(listA):
@@ -139,7 +139,7 @@ def makePairwise(listA):
                 yield items,others
 
 hashPairs = list(makePairwise(hashes))
-# print(hashPairs)
+
 
 #
 # create a distance matrix
@@ -156,7 +156,7 @@ def calcDist(hashPair,dynamicImagesDict):
     return dist
 
 distDict = {h:calcDist(h,dynamicImagesDict) for h in hashPairs}
-print(distDict)
+
 indexDict = {h:indx for indx,h in enumerate(hashes)}
 
 
@@ -215,40 +215,3 @@ for indx,images in enumerate(toPlot):
     plt.axis('off')
 plt.subplots_adjust(wspace=0,hspace=0)
 plt.show()
-
-
-# optimize
-
-
-
-# display
-
-
-
-# make color grading program
-
-#
-
-#
-# print(openImages)
-#
-#
-# dynImageList = [distanceDynamicPhoto(i[0],i[1],images=([a[0] for a in openImages
-# if hash(hashable(a[0])) != hash(hashable(i[0]))])) for i in openImages]
-# dynamicImagesDict = {hash(i):i for i in dynImageList}
-#
-#
-# origUnused = dynamicImagesDict.keys()
-#
-#
-# print("num")
-# print(len(origUnused))
-#
-#
-#
-#
-#
-
-# hashOrder,dF = createDataFrame(dynamicImagesDict)
-#
-#
