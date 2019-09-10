@@ -1,0 +1,276 @@
+! NBS/ISCC Color System Centroids       http://tx4.us/nbs-iscc.htm
+!
+! Copyright © 2003 Voluntocracy.  Permission is granted to copy and
+! distribute modified or unmodified versions of this color dictionary
+! provided the copyright notice and this permission notice are preserved
+! on all copies and the entire such work is distributed under the terms
+! of a permission notice identical to this one.
+!
+!"R" "G" "B"		"Color Name"
+  0  84  61		deep green
+  0  42  41		very darkbluish green
+  0  46  59		very darkgreenish blue
+  0  73  88		dark greenish blue
+  0  75  73		dark bluish green
+  0  68  63		deep bluish green
+ 27  77  62		dark green
+ 43  61  38		dark olive green
+ 23  54  32		very dark yellowish green
+  0  49  24		very deep yellowish green
+ 28  53  45		very dark green
+ 54  53  39		dark grayish olive
+ 49  54  43		dark grayish olive green
+ 62  50  44		dark grayish brown
+ 37  36  29		olive black
+ 40  32  28		brownish black
+ 59  49  33		dark olive brown
+ 64  61  33		dark olive
+ 72  60  50		dark grayish yellowish brown
+ 58  75  71		dark grayish green
+ 54  69  79		dark grayish blue
+ 26  36  33		blackish green
+ 30  35  33		greenish black
+ 32  36  40		bluish black
+ 32  40  48		blackish blue
+ 34  34  34		black
+ 36  33  36		purplish black
+ 40  32  34		reddish black
+  0  48  78		dark blue
+  0  65 106		deep blue
+ 76  81 109		grayish purplish blue
+  0 103 165		strong blue
+  0 119 145		strong greenish blue
+ 54 117 136		moderate greenish blue
+ 46 132 149		deep greenish blue
+  0 133 161		vivid greenish blue
+ 67 107 149		moderate blue
+ 94 113 106		grayish green
+ 83 104 120		grayish blue
+ 81  88  94		dark bluish gray
+ 85  85  85		dark gray
+ 93  85  91		dark purplish gray
+ 78  87  85		dark greenish gray
+ 91  80  79		brownish gray
+ 92  80  79		dark reddish gray
+ 87  85  76		olive gray
+ 99  81  71		grayish brown
+ 81  87  68		grayish olive green
+ 91  88  66		grayish olive
+126 109  90		grayish yellowish brown
+ 53  94  59		dark yellowish green
+ 49 120 115		moderate bluish green
+  0 136 130		vivid bluish green
+  0 122 116		strong bluish green
+ 59 120  97		moderate green
+  0 121  89		strong green
+  0 161 194		vivid blue
+ 35 158 186		brilliant greenish blue
+ 73 151 208		brilliant blue
+112 163 204		light blue
+102 170 188		light greenish blue
+161 202 241		very light blue
+179 188 226		very light purplish blue
+150 222 209		very light bluish green
+142 209 178		very light green
+199 230 215		very pale green
+223 237 232		greenish white
+232 227 229		purplish white
+233 233 237		bluish white
+242 243 244		white
+240 234 214		yellowish white
+236 213 197		pale yellowish pink
+234 227 225		pinkish white
+178 190 181		light greenish gray
+191 185 189		light purplish gray
+192 200 225		very pale purplish blue
+196 195 221		very pale violet
+188 212 230		very pale blue
+180 188 192		light bluish gray
+156 209 220		very light greenish blue
+141 163 153		pale green
+145 163 176		pale blue
+193 182 179		pinkish gray
+185 184 181		light gray
+194 172 153		brownish pink
+191 184 165		yellowish gray
+174 155 130		light grayish yellowish brown
+143 151 121		grayish yellow green
+138 135 118		light olive gray
+140 135 103		light grayish olive
+149 128 112		light grayish brown
+142 130 121		light brownish gray
+143 129 127		reddish gray
+139 133 137		purplish gray
+129 135 139		bluish gray
+132 132 130		medium gray
+140 146 172		pale purplish blue
+125 137 132		greenish gray
+106 171 142		light green
+102 173 164		light bluish green
+  0 166 147		brilliant bluish green
+ 62 180 137		brilliant green
+ 68 148  74		strong yellowish green
+ 39 166  76		vivid yellowish green
+147 197 146		light yellowish green
+103 146 103		moderate yellowish green
+138 154  91		moderate yellow green
+152 148  62		dark greenish yellow
+171 145  68		dark yellow
+161 143  96		dark grayish yellow
+194 178 128		grayish yellow
+185 181 125		grayish greenish yellow
+201 174  93		moderate yellow
+185 180  89		moderate greenish yellow
+201 220 137		light yellow green
+250 214 165		pale orange yellow
+218 223 183		pale yellow green
+243 229 171		pale yellow
+248 222 126		light yellow
+235 232 164		pale greenish yellow
+182 229 175		very light yellowish green
+131 211 125		brilliant yellowish green
+189 218  87		brilliant yellow green
+233 228  80		brilliant greenish yellow
+234 230 121		light greenish yellow
+250 218  94		brilliant yellow
+243 195   0		vivid yellow
+220 211   0		vivid greenish yellow
+190 183  46		strong greenish yellow
+212 175  55		strong yellow
+175 141  19		deep yellow
+155 148   0		deep greenish yellow
+141 182   0		vivid yellow green
+126 159  46		strong yellow green
+  0 136  86		vivid green
+ 70 113  41		deep yellow green
+  0  98  45		deep yellowish green
+ 74  93  35		moderate olive green
+102  93  30		moderate olive
+134 126  54		light olive
+108  84  30		moderate olive brown
+ 35  47   0		deep olive green
+ 64  79   0		strong olive green
+150 113  23		light olive brown
+190 101  22		deep orange
+ 86   7  12		deep reddish brown
+ 89  51  25		deep brown
+101  69  34		deep yellowish brown
+111  78  55		moderate brown
+130 102  68		moderate yellowish brown
+153 101  21		strong yellowish brown
+128  70  27		strong brown
+174 105  56		brownish orange
+158  71  50		dark reddish orange
+188  63  74		strong red
+170  56  30		deep reddish orange
+190   0  50		vivid red
+136  45  23		strong reddish brown
+226  88  34		vivid reddish orange
+230 103  33		deep yellowish pink
+201 133   0		deep orange yellow
+234 162  33		strong orange yellow
+246 166   0		vivid orange yellow
+237 135  45		strong orange
+253 148  63		brilliant orange
+243 132   0		vivid orange
+255 193  79		brilliant orange yellow
+251 201 127		light orange yellow
+250 181 127		light orange
+255 183 165		vivid yellowish pink
+249 147 121		strong yellowish pink
+217 144  88		moderate orange
+227 168  87		moderate orange yellow
+193 154 107		light yellowish brown
+166 123  91		light brown
+190 138  61		dark orange yellow
+203 109  81		moderate reddish orange
+180 116  94		grayish reddish orange
+217  96  59		strong reddish orange
+222 111 161		deep purplish pink
+230 143 172		strong purplish pink
+228 113 122		deep pink
+196 131 121		dark yellowish pink
+192 128 129		dark pink
+183 132 167		light reddish purple
+193 126 145		dark purplish pink
+170 138 158		pale reddish purple
+150 144 171		pale violet
+151 127 115		light grayish reddish brown
+168 124 109		light reddish brown
+175 134 142		light grayish purplish red
+173 136 132		light grayish red
+217 166 169		moderate yellowish pink
+222 165 164		moderate pink
+199 173 163		grayish yellowish pink
+196 174 173		grayish pink
+195 166 177		grayish purplish pink
+170 152 169		pale purple
+213 151 174		moderate purplish pink
+234 147 153		strong pink
+255 181 186		vivid pink
+255 200 214		brilliant purplish pink
+239 187 204		light purplish pink
+213 186 219		very light purple
+214 202 221		very pale purple
+232 204 215		pale purplish pink
+244 194 194		light yellowish pink
+234 216 215		pale pink
+249 204 202		light pink
+220 208 255		very light violet
+211 153 230		brilliant purple
+182 149 192		light purple
+135 145 191		light purplish blue
+140 130 182		light violet
+144 101 202		vivid violet
+154  78 174		vivid purple
+158  79 136		strong reddish purple
+206  70 118		vivid purplish red
+171  78  82		moderate red
+168  81 110		moderate purplish red
+179  68 108		strong purplish red
+145  92 131		moderate reddish purple
+145  95 109		grayish purplish red
+121  68  59		moderate reddish brown
+144  93  93		grayish red
+103  76  71		grayish reddish brown
+121 104 120		grayish purple
+131 100 121		grayish reddish purple
+108 121 184		brilliant purplish blue
+126 115 184		brilliant violet
+134  96 142		moderate purple
+135  86 146		strong purple
+ 96  78 151		strong violet
+ 84  90 167		strong purplish blue
+ 78  81 128		moderate purplish blue
+ 96  78 129		moderate violet
+ 85  76 105		grayish violet
+ 96  47 107		deep purple
+ 84  25  78		very deep reddish purple
+ 64  26  76		very deep purple
+ 50  23  77		deep violet
+ 48  38 122		vivid purplish blue
+ 39  36  88		deep purplish blue
+ 47  33  64		dark violet
+ 37  36  64		dark purplish blue
+ 41  30  41		blackish purple
+ 46  29  33		blackish red
+ 56  21  44		very dark purplish red
+ 52  23  49		very dark reddish purple
+ 48  25  52		very dark purple
+ 93  57  84		dark reddish purple
+ 86  60  92		dark purple
+ 80  64  77		dark grayish purple
+ 84  61  63		dark grayish red
+ 75  54  33		dark yellowish brown
+ 66  37  24		dark brown
+ 67  48  46		dark grayish reddish brown
+ 62  29  30		dark reddish brown
+114  47  55		dark red
+103  49  71		dark purplish red
+ 84  19  59		very deep purplish red
+ 63  23  40		very dark red
+120  24  74		deep purplish red
+132  27  45		deep red
+ 92   9  35		very deep red
+112  41  99		deep reddish purple
+135   0 116		vivid reddish purple
