@@ -19,6 +19,7 @@ tqdm
 cPickle
 
 # Instructions
+Within the Photo-Gradients folder, make an empty Images folder and an empty Saves folder.
 Place image .jpg files in the Images folder, and run with `python Main.py`.
 
 If a save file is found, type `y` to use it or `n` to ignore and load all
